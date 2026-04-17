@@ -30,7 +30,6 @@ No single party can alter historical records. Every stakeholder can independentl
 - [Testing](#-testing)
 - [Known Limitations](#-known-limitations)
 - [Future Work](#-future-work)
-- [Team](#-team)
 
 ---
 
