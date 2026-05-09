@@ -203,16 +203,16 @@ with st.sidebar:
         st.info("Enter your wallet address above to log in.")
 
     st.divider()
-    st.markdown("### 🔧 Backend")
+    st.markdown("### Backend")
     if st.button("Health Check"):
-	    try:
-		r = requests.get(f"{API_BASE}/health", timeout=5)
-		if r.status_code == 200:
-		    st.success("Backend is online")
-		else:
-		    st.error("Backend returned an error")
-	    except:
-		st.error("Backend is offline")
+        try:
+            r = requests.get(f"{API_BASE}/health", timeout=5)
+            if r.status_code == 200:
+                st.success("Backend is online")
+            else:
+                st.error("Backend returned an error")
+        except:
+            st.error("Backend is offline")
 
     st.divider()
     st.caption("Academic Peer Review System")
