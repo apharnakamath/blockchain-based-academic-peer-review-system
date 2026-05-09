@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
-API_BASE = "http://localhost:3000/api"
+API_BASE = "https://blockchain-based-academic-peer-review.onrender.com"
 
 st.set_page_config(
     page_title="Academic Peer Review System",
