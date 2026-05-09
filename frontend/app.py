@@ -142,7 +142,7 @@ def status_color(status):
 def show_paper_card(paper, expanded=False):
     status = paper.get("status", "Submitted")
     color = status_color(status)
-    with st.expander(f"📄 {paper.get('title', 'Untitled')}   ·   `{paper.get('originalHash', '')[:16]}...`", expanded=expanded):
+    with st.expander(f" {paper.get('title', 'Untitled')}   ·   `{paper.get('originalHash', '')[:16]}...`", expanded=expanded):
         col1, col2, col3 = st.columns([2, 1, 1])
         with col1:
             st.markdown(f"**Abstract:** {paper.get('abstract', '—')}")
@@ -176,7 +176,7 @@ def show_paper_card(paper, expanded=False):
 
 # ─── SIDEBAR ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🔗 Connect Wallet")
+    st.markdown("## Connect Wallet")
     wallet = st.text_input("Your Wallet Address", placeholder="0x...", key="wallet_input",
                            help="Enter your Ethereum wallet address to access your role's dashboard")
 
@@ -189,7 +189,7 @@ with st.sidebar:
         if code == 200:
             user_data = data
             role = data.get("role")
-            st.success(f"✅ Welcome, **{data.get('name')}**!")
+            st.success(f"Welcome, **{data.get('name')}**!")
             badge_class = f"badge-{role.lower()}"
             st.markdown(f'<span class="role-badge {badge_class}">{role}</span>', unsafe_allow_html=True)
             st.markdown(f'<div class="sidebar-wallet">{wallet}</div>', unsafe_allow_html=True)
@@ -205,14 +205,14 @@ with st.sidebar:
     st.divider()
     st.markdown("### 🔧 Backend")
     if st.button("Health Check"):
-        try:
-            r = requests.get("http://localhost:3000/health", timeout=5)
-            if r.status_code == 200:
-                st.success("✅ Backend is online")
-            else:
-                st.error("Backend returned an error")
-        except:
-            st.error("❌ Backend is offline")
+    try:
+        r = requests.get(f"{API_BASE}/health", timeout=5)
+        if r.status_code == 200:
+            st.success("Backend is online")
+        else:
+            st.error("Backend returned an error")
+    except:
+        st.error("Backend is offline")
 
     st.divider()
     st.caption("Academic Peer Review System")
@@ -228,7 +228,7 @@ st.markdown("""
 
 # ─── NOT LOGGED IN ────────────────────────────────────────────────────────────
 if not wallet or not wallet.startswith("0x"):
-    st.info("👈 Please enter your wallet address in the sidebar to access your dashboard.")
+    st.info("Please enter your wallet address in the sidebar to access your dashboard.")
     
     with st.expander("ℹ️ About this system"):
         st.markdown("""
@@ -253,8 +253,8 @@ elif not role:
 #  ADMIN DASHBOARD
 # ═══════════════════════════════════════════════════════════════════════════
 if role == "Admin":
-    st.subheader("🛡️ Admin Dashboard")
-    tab1, tab2 = st.tabs(["➕ Register User", "👥 All Users"])
+    st.subheader(" Admin Dashboard")
+    tab1, tab2 = st.tabs(["Register User", "All Users"])
 
     with tab1:
         st.markdown("### Register a New User On-Chain")
@@ -290,10 +290,10 @@ if role == "Admin":
                     with st.spinner("Registering on blockchain..."):
                         data, code = api_post("/users/register", payload)
                     if code == 201:
-                        st.success(f"✅ {new_name} registered as **{new_role}** successfully!")
+                        st.success(f" {new_name} registered as **{new_role}** successfully!")
                         st.info("Transaction has been recorded on the blockchain ledger.")
                     else:
-                        st.error(f"❌ {data.get('error', 'Registration failed')}")
+                        st.error(f" {data.get('error', 'Registration failed')}")
 
     with tab2:
         st.markdown("### All Registered Users")
@@ -321,8 +321,8 @@ if role == "Admin":
 #  AUTHOR DASHBOARD
 # ═══════════════════════════════════════════════════════════════════════════
 elif role == "Author":
-    st.subheader("✍️ Author Dashboard")
-    tab1, tab2, tab3 = st.tabs(["📤 Submit Paper", "📋 My Papers", "🔄 Submit Revision"])
+    st.subheader("Author Dashboard")
+    tab1, tab2, tab3 = st.tabs(["Submit Paper", "My Papers", "Submit Revision"])
 
     # ── Submit Paper ────────────────────────────────────────────────────────
     with tab1:
@@ -334,7 +334,7 @@ elif role == "Author":
             ipfs_cid = st.text_input("IPFS CID *", placeholder="Qm... or bafy...",
                                      help="The IPFS Content Identifier of your uploaded paper PDF.")
 
-            submitted = st.form_submit_button("🚀 Submit to Blockchain", type="primary", use_container_width=True)
+            submitted = st.form_submit_button("Submit to Blockchain", type="primary", use_container_width=True)
             if submitted:
                 if not title or not abstract or not ipfs_cid:
                     st.error("All fields are required.")
@@ -348,7 +348,7 @@ elif role == "Author":
                     with st.spinner("Submitting paper hash to blockchain..."):
                         data, code = api_post("/papers/submit", payload)
                     if code == 201:
-                        st.success("✅ Paper submitted successfully!")
+                        st.success("Paper submitted successfully!")
                         col1, col2 = st.columns(2)
                         col1.markdown(f"**Paper Hash:**")
                         col1.markdown(f'<div class="tx-hash">{data.get("paperHash")}</div>', unsafe_allow_html=True)
@@ -356,7 +356,7 @@ elif role == "Author":
                         col2.markdown(f'<div class="tx-hash">{data.get("txHash")}</div>', unsafe_allow_html=True)
                         st.caption("Keep your Paper Hash — you'll need it to track your submission.")
                     else:
-                        st.error(f"❌ {data.get('error', 'Submission failed')}")
+                        st.error(f" {data.get('error', 'Submission failed')}")
 
     # ── My Papers ────────────────────────────────────────────────────────────
     with tab2:
@@ -391,7 +391,7 @@ elif role == "Author":
             orig_hash   = st.text_input("Original Paper Hash *", placeholder="0x...")
             new_cid     = st.text_input("New IPFS CID *", placeholder="Qm...",
                                         help="CID of your revised PDF on IPFS.")
-            submitted = st.form_submit_button("🔄 Submit Revision", type="primary", use_container_width=True)
+            submitted = st.form_submit_button("Submit Revision", type="primary", use_container_width=True)
             if submitted:
                 if not orig_hash or not new_cid:
                     st.error("Both fields are required.")
@@ -400,18 +400,18 @@ elif role == "Author":
                     with st.spinner("Recording revision on blockchain..."):
                         data, code = api_post("/papers/revise", payload)
                     if code == 200:
-                        st.success("✅ Revision submitted! Paper re-enters the review queue.")
+                        st.success("Revision submitted! Paper re-enters the review queue.")
                         st.markdown(f"**New Revision Hash:** `{data.get('newRevisionHash')}`")
                         st.markdown(f"**Tx Hash:** `{data.get('txHash')}`")
                     else:
-                        st.error(f"❌ {data.get('error', 'Revision failed')}")
+                        st.error(f" {data.get('error', 'Revision failed')}")
 
 # ═══════════════════════════════════════════════════════════════════════════
 #  REVIEWER DASHBOARD
 # ═══════════════════════════════════════════════════════════════════════════
 elif role == "Reviewer":
-    st.subheader("🔍 Reviewer Dashboard")
-    tab1, tab2 = st.tabs(["📋 Assigned Papers", "⭐ Submit Review"])
+    st.subheader("Reviewer Dashboard")
+    tab1, tab2 = st.tabs(["Assigned Papers", "Submit Review"])
 
     with tab1:
         st.markdown("### Papers Assigned to You")
@@ -441,7 +441,7 @@ elif role == "Reviewer":
             st.markdown(f"**Selected Score: {score}/10**")
             comments = st.text_area("Comments / Feedback", placeholder="Provide detailed feedback for the author and editor...", height=150)
 
-            submitted = st.form_submit_button("📤 Submit Review to Blockchain", type="primary", use_container_width=True)
+            submitted = st.form_submit_button("Submit Review to Blockchain", type="primary", use_container_width=True)
             if submitted:
                 if not paper_hash:
                     st.error("Paper Hash is required.")
@@ -455,22 +455,22 @@ elif role == "Reviewer":
                     with st.spinner("Recording review on blockchain..."):
                         data, code = api_post("/papers/review", payload)
                     if code == 200:
-                        st.success("✅ Review submitted! Score recorded immutably on-chain.")
+                        st.success("Review submitted! Score recorded immutably on-chain.")
                         st.markdown(f"**Tx Hash:** `{data.get('txHash')}`")
                         st.caption("Your identity is preserved — only your anonymous hash was recorded on the ledger.")
                     else:
-                        st.error(f"❌ {data.get('error', 'Review submission failed')}")
+                        st.error(f" {data.get('error', 'Review submission failed')}")
 
 # ═══════════════════════════════════════════════════════════════════════════
 #  EDITOR DASHBOARD
 # ═══════════════════════════════════════════════════════════════════════════
 elif role == "Editor":
-    st.subheader("📝 Editor Dashboard")
-    tab1, tab2, tab3 = st.tabs(["📋 All Papers", "👤 Assign Reviewer", "⚖️ Finalize Decision"])
+    st.subheader("Editor Dashboard")
+    tab1, tab2, tab3 = st.tabs(["All Papers", "Assign Reviewer", "Finalize Decision"])
 
     with tab1:
         st.markdown("### All Submitted Papers")
-        if st.button("🔄 Refresh All", key="refresh_editor"):
+        if st.button("Refresh All", key="refresh_editor"):
             pass
 
         data, code = api_get("/papers")
@@ -517,7 +517,7 @@ elif role == "Editor":
                 reviewer_wallet = st.text_input("Reviewer Wallet Address *", placeholder="0x...",
                                                 help="No reviewers loaded — enter manually.")
 
-            submitted = st.form_submit_button("🔗 Assign Reviewer On-Chain", type="primary", use_container_width=True)
+            submitted = st.form_submit_button(" Assign Reviewer On-Chain", type="primary", use_container_width=True)
             if submitted:
                 if not paper_hash_assign or not reviewer_wallet:
                     st.error("Both fields are required.")
@@ -526,19 +526,19 @@ elif role == "Editor":
                     with st.spinner("Recording assignment on blockchain..."):
                         data, code = api_post("/papers/assign", payload)
                     if code == 200:
-                        st.success("✅ Reviewer assigned! Transaction recorded on-chain.")
+                        st.success("Reviewer assigned! Transaction recorded on-chain.")
                         st.json({"paper_status": data.get("paper", {}).get("status"), "assigned_to": reviewer_wallet})
                     else:
-                        st.error(f"❌ {data.get('error', 'Assignment failed')}")
+                        st.error(f" {data.get('error', 'Assignment failed')}")
 
     with tab3:
         st.markdown("### Record Final Editorial Decision")
         st.error("⚠️ **This action is irreversible.** Once a decision is finalized, no further score changes or decision updates are permitted by any wallet.")
 
         DECISIONS = {
-            "✅ Accept": 1,
-            "❌ Reject": 2,
-            "🔄 Request Revision": 3
+            "Accept": 1,
+            "Reject": 2,
+            "Request Revision": 3
         }
 
         with st.form("decision_form"):
@@ -558,15 +558,15 @@ elif role == "Editor":
                     with st.spinner("Writing final decision to blockchain..."):
                         data, code = api_post("/papers/decision", payload)
                     if code == 200:
-                        st.success(f"✅ Decision recorded: **{decision_label}**")
+                        st.success(f" Decision recorded: **{decision_label}**")
                         st.markdown(f"**Tx Hash:** `{data.get('txHash')}`")
                         st.caption("This transaction is now permanently recorded on the immutable ledger.")
                     else:
-                        st.error(f"❌ {data.get('error', 'Decision recording failed')}")
+                        st.error(f" {data.get('error', 'Decision recording failed')}")
 
 # ─── PAPER LOOKUP (AVAILABLE TO ALL ROLES) ───────────────────────────────────
 st.divider()
-with st.expander("🔎 Paper Lookup — Search Any Paper by Hash"):
+with st.expander("Paper Lookup — Search Any Paper by Hash"):
     lookup_hash = st.text_input("Enter Paper Hash", placeholder="0x...", key="lookup_hash")
     if st.button("Search", key="lookup_btn") and lookup_hash:
         data, code = api_get(f"/papers/{lookup_hash}")
